@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\Course;
+use App\Models\Enrollment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Spatie\LaravelPdf\Facades\Pdf;
 use Illuminate\Support\Facades\Storage;
+
 
 
 class StudentController extends Controller
@@ -266,15 +268,48 @@ class StudentController extends Controller
 
 
     // Admin view all students
-    public function indexAdmin()
-    {
-        // Fetch all students (paginated)
-        $students = Student::paginate(10);
+    public function indexAdmin(Request $request)
+{
+    // Get search, year level, and status inputs
+    $search = $request->input('search');
+    $yearLevel = $request->input('year_level');
+    $status = $request->input('status');
 
-        // Return the view with the students data
-        return view('student.indexAdmin', compact('students'));
+    // Query the students table
+    $query = Student::query();
+
+    // Apply search filter
+    if (!empty($search)) {
+        $query->where(function ($q) use ($search) {
+            $q->where('first_name', 'LIKE', "%{$search}%")
+              ->orWhere('surname', 'LIKE', "%{$search}%");
+        });
     }
 
+    // Apply year level filter
+    if (!empty($yearLevel)) {
+        $query->whereHas('enrollment', function ($q) use ($yearLevel) {
+            $q->where('year_level', $yearLevel);
+        });
+    }
+
+    // Apply status filter
+    if (!empty($status)) {
+        $query->where('status', $status);
+    }
+
+    // Paginate results
+    $students = $query->paginate(10);
+
+    // Get unique year levels and statuses for filters
+    $yearLevels = Enrollment::distinct()->pluck('year_level');
+    $statuses = Student::distinct()->pluck('status');
+
+    // Return view with data
+    return view('student.indexAdmin', compact('students', 'yearLevels', 'statuses'));
+}
+
+    
     // Method for the student to view their own data
     public function indexStudent()
     {
@@ -284,6 +319,9 @@ class StudentController extends Controller
         // Return the view with the student's data
         return view('student.indexStudent', compact('student'));
     }
+
+ 
+
 
 
 

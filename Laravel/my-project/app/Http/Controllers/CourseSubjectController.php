@@ -12,20 +12,31 @@ class CourseSubjectController extends Controller
     // Display all course-subject mappings grouped by course_code
     public function index()
     {
+        // Fetch the course subjects with their related course and subject data
         $courseSubjects = CourseSubject::with(['course', 'subject'])->get();
     
-        // Group by course_code and include course_name properly
+        // Group by course_code first, then by year_level within each course
         $groupedCourses = $courseSubjects->groupBy(fn($item) => $item->course->course_code)
             ->map(function ($subjects, $courseCode) {
+                // Retrieve the course name
+                $courseName = optional($subjects->first()->course)->course_name;
+    
+                // Group the subjects by year_level
+                $groupedByYearLevel = $subjects->groupBy(function ($subject) {
+                    return $subject->subject->year_level;
+                });
+    
                 return [
-                    'course_name' => optional($subjects->first()->course)->course_name,
-                    'course_code' => optional($subjects->first()->course)->course_code, 
-                    'subjects' => $subjects, // Keep the original structure
+                    'course_name' => $courseName,
+                    'course_code' => $courseCode,
+                    'subjects_by_year_level' => $groupedByYearLevel, // Subjects grouped by year_level
                 ];
             });
     
         return view('course-subjects.index', compact('groupedCourses', 'courseSubjects'));
     }
+    
+    
     
     
     // Show form to assign subjects to a course

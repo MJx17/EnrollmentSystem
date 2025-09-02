@@ -18,25 +18,29 @@
             </li>
 
             <!-- Enrollment Page - Accessible to Admins and Students Only -->
-            @if(auth()->check() && (auth()->user()->hasRole('') || auth()->user()->hasRole('student')))
-            <li>
-                <a href="{{ route('student.create') }}"
+            @if(auth()->check() && (auth()->user()->hasRole('student') || auth()->user()->hasRole('')))
+                <li>
+                    {{-- Always show the Details link --}}
+                    <a href="{{ route('student.create') }}"
                     class="block py-2 px-4 w-full text-center font-medium text-white rounded-lg transition-all duration-200 ease-in-out hover:bg-green-500 {{ Route::currentRouteName() == 'admin.dashboard' ? 'bg-gray-700' : '' }}">
-                    Details
-                </a>
-                <a href="{{ route('student_subject.subjects', auth()->user()->student->id) }}"
-                    class="block py-2 px-4 w-full text-center font-medium text-white rounded-lg transition-all duration-200 ease-in-out hover:bg-green-500 {{ Route::currentRouteName() == 'admin.dashboard' ? 'bg-gray-700' : '' }}">
-                    Subjects
-                </a>
-                <a href="{{ route('enrollments.fees', auth()->user()->student->id) }}"
-                    class="block py-2 px-4 w-full text-center font-medium text-white rounded-lg transition-all duration-200 ease-in-out hover:bg-green-500 {{ Route::currentRouteName() == 'admin.dashboard' ? 'bg-gray-700' : '' }}">
-                    Enrollment
-                </a>
+                        Details
+                    </a>
 
-
-            </li>
-
+                    {{-- Show Subjects and Enrollment only if student status is 'enrolled' --}}
+                    @if(auth()->user()->student && auth()->user()->student->status === 'enrolled')
+                        <a href="{{ route('student_subject.subjects', auth()->user()->student->id) }}"
+                        class="block py-2 px-4 w-full text-center font-medium text-white rounded-lg transition-all duration-200 ease-in-out hover:bg-green-500 {{ Route::currentRouteName() == 'admin.dashboard' ? 'bg-gray-700' : '' }}">
+                            Subjects
+                        </a>
+                        <a href="{{ route('enrollments.fees', auth()->user()->student->id) }}"
+                        class="block py-2 px-4 w-full text-center font-medium text-white rounded-lg transition-all duration-200 ease-in-out hover:bg-green-500 {{ Route::currentRouteName() == 'admin.dashboard' ? 'bg-gray-700' : '' }}">
+                            Enrollment
+                        </a>
+                    @endif
+                </li>
             @endif
+
+
 
 
             <!-- Admin Page - Accessible to Admins Only -->

@@ -12,12 +12,29 @@ use RealRashid\SweetAlert\Facades\Alert;
 class SubjectController extends Controller
 {
     // Display a listing of subjects
-    public function index()
-    {
-        $subjects = Subject::paginate(10);
-        
-        return view('subjects.index', compact('subjects'));
+    public function index(Request $request)
+{
+    $query = Subject::query();
+
+    // Search by code and subject name
+    if ($request->has('search') && $request->search) {
+        $query->where(function ($query) use ($request) {
+            $query->where('code', 'like', '%' . $request->search . '%')
+                  ->orWhere('name', 'like', '%' . $request->search . '%');
+        });
     }
+
+    // Filter by year level
+    if ($request->has('year_level') && $request->year_level) {
+        $query->where('year_level', $request->year_level);
+    }
+
+    // Paginate results
+    $subjects = $query->paginate(10);
+
+    return view('subjects.index', compact('subjects', ));
+}
+
 
     // Show the form to create a new subject
     public function create()

@@ -98,19 +98,7 @@ class Student extends Model
      * Dynamically get the year level based on enrolled subjects and other criteria.
      */
 
-     public function getFormattedYearLevelAttribute()
-     {
-         $yearLevels = [
-             'first_year' => 'First Year',
-             'second_year' => 'Second Year',
-             'third_year' => 'Third Year',
-             'fourth_year' => 'Fourth Year',
-             'fifth_year' => 'Fifth Year',
-             // Add more levels if necessary
-         ];
- 
-         return $yearLevels[$this->year_level] ?? 'N/A';
-     }
+    
      public function getFormattedLivingSituationAttribute()
      {
          $livingSituation = [
@@ -123,6 +111,38 @@ class Student extends Model
  
          return $livingSituation[$this->living_situation] ?? 'N/A';
      }
+
+    public function getFormattedStatus()
+    {
+        $status= [
+        'enrolled' => 'Enrolled',
+        'not_enrolled' => 'Not Enroled'
+        ];
+
+        return $status[$this->status] ?? 'N/A'; 
+    }
+
+    public function getFormattedYearLevelAttribute()
+    {
+        // Check if the student has an enrollment relationship
+        $enrollment = $this->enrollment; // Assuming 'enrollment' is the relationship method
+    
+        if ($enrollment) {
+            $yearLevels = [
+                'first_year' => 'First Year',
+                'second_year' => 'Second Year',
+                'third_year' => 'Third Year',
+                'fourth_year' => 'Fourth Year',
+                'fifth_year' => 'Fifth Year',
+                // Add more levels if necessary
+            ];
+    
+            return $yearLevels[$enrollment->year_level] ?? 'N/A';
+        }
+    
+        return 'N/A'; // Return 'N/A' if no enrollment is found
+    }
+    
 
 
      public function getYearLevelByStudentId($studentId)

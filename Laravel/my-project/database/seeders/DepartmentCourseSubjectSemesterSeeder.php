@@ -979,6 +979,8 @@ class DepartmentCourseSubjectSemesterSeeder extends Seeder
         $ge6->courses()->attach([$course1->id, $course2->id,  $course3->id, $course4->id,  $course5->id, ]);
         $ge7->courses()->attach([$course1->id, $course2->id,  $course3->id, $course4->id,  $course5->id, ]); // Attach courses via the pivot table
         $ge8->courses()->attach([$course1->id, $course2->id,  $course3->id, $course4->id,  $course5->id, ]);
+      
+      
         $perDev1->courses()->attach([$course1->id, $course2->id,  $course3->id, $course4->id,  $course5->id, ]); // Attach courses via the pivot table
         $perDev2->courses()->attach([$course1->id, $course2->id,  $course3->id, $course4->id,  $course5->id, ]);
         $pe1->courses()->attach([$course1->id, $course2->id,  $course3->id, $course4->id,  $course5->id, ]); // Attach courses via the pivot table

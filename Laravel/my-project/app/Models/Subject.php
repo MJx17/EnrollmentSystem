@@ -70,8 +70,20 @@ class Subject extends Model
         return $this->belongsToMany(Course::class, 'course_subject', 'subject_id', 'course_id');
     }
     
-
-
+    public function getFormattedYearLevelAttribute()
+    {
+        $yearLevels = [
+            'first_year' => 'First Year',
+            'second_year' => 'Second Year',
+            'third_year' => 'Third Year',
+            'fourth_year' => 'Fourth Year',
+            'fifth_year' => 'Fifth Year',
+        ];
+    
+        // Assuming `year_level` is directly in the `Student` model
+        return $yearLevels[$this->year_level] ?? 'N/A';
+    }
+    
 
     // Many-to-Many: Relation to Professors
   
